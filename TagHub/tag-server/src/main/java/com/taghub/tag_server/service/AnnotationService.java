@@ -20,7 +20,7 @@ public class AnnotationService {
 
 	private final AnnotationRepository annotationRepository;
 	private final TextDataRepository textDataRepository;
-	private final RoomServiceClient roomServiceClient; // Feign köprümüz
+	private final RoomServiceClient roomServiceClient;
 
 	@Transactional
 	public void saveVote(UUID roomId, UUID userId, UUID textId, Integer labelIndex) {

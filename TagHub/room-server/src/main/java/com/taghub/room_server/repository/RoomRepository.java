@@ -15,3 +15,4 @@ public interface RoomRepository extends JpaRepository<Room, UUID> {
 			"(SELECT rp.roomId FROM RoomParticipant rp WHERE rp.userId = :userId AND rp.status = 'ACTIVE')")
 	List<Room> findActiveRoomsByUserId(@Param("userId") UUID userId);
 }
+

@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Plus, ArrowLeft, Users, Shield, ArrowRight, XCircle, Box, KeyRound, UserMinus, Download } from 'lucide-react';
 import api from '../services/api';
-
-// Yardımcı fonksiyon: JWT çözücü
 function parseJwt(token) {
   try {
     if (!token) return null;
@@ -22,8 +20,6 @@ export default function MyRooms() {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  // Create Modal states
   const [showModal, setShowModal] = useState(false);
   const [newRoomName, setNewRoomName] = useState('');
   const [newRoomCapacity, setNewRoomCapacity] = useState('');
@@ -31,8 +27,6 @@ export default function MyRooms() {
   const [newRoomFile, setNewRoomFile] = useState(null);
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState(null);
-
-  // Participants Modal states
   const [showParticipantsModal, setShowParticipantsModal] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState(null);
   const [participants, setParticipants] = useState([]);
@@ -69,18 +63,12 @@ export default function MyRooms() {
     if (!window.confirm("Bu odayı kapatmak (Close Room) istediğinize emin misiniz?")) return;
     
     try {
-      // 1. Önce oyları say ve etiketlemeyi sonlandır
       try {
         await api.post(`/texts/${roomId}/close`);
       } catch (tallyErr) {
         console.warn("Oylar sayılırken bir sorun oluştu (Belki hiç veri yüklenmemiştir):", tallyErr);
-        // Hata olsa da odayı kapatmaya devam edebiliriz
       }
-
-      // 2. Odayı sil (statüsünü CLOSED yap)
       await api.delete(`/room/${roomId}`);
-      
-      // Update local state to move the room to CLOSED list
       setRooms(prevRooms => prevRooms.map(room => 
         room.id === roomId ? { ...room, status: 'CLOSED' } : room
       ));
@@ -146,8 +134,6 @@ export default function MyRooms() {
       } else {
         errorMessage = err.response?.data?.message || err.response?.data?.error || err.message;
       }
-      
-      // Eğer hata "metin bulunamadı" veya 500/503 ise, bu odanın oyları eski kodda sayılmadan kapanmış olabilir.
       if (errorMessage.includes("metin bulunamadı") || errorMessage.includes("500") || errorMessage.includes("503") || errorMessage.includes("Service Unavailable") || errorMessage.includes("Internal Server Error")) {
         const confirmTally = window.confirm("Bu odanın oyları arka planda henüz sayılmamış veya hesaplanmamış görünüyor (Odayı eski sürümde kapatmış olabilirsiniz). Şimdi oyları hesaplatıp raporu indirmek ister misiniz?");
         if (confirmTally) {
@@ -169,8 +155,6 @@ export default function MyRooms() {
     e.preventDefault();
     setCreating(true);
     setCreateError(null);
-    
-    // Split labels by comma and clean whitespace
     const labelsArray = newRoomLabels.split(',').map(l => l.trim()).filter(l => l !== '');
     
     try {
@@ -179,16 +163,11 @@ export default function MyRooms() {
         capacity: Number(newRoomCapacity),
         labels: labelsArray
       });
-      
-      // Add the new room to the state so it appears immediately
       setRooms(prev => [...prev, response.data]);
-      
-      // Upload dataset if attached
       if (newRoomFile) {
         try {
           const formData = new FormData();
           formData.append('file', newRoomFile);
-          // Assuming gateway routes /texts/** to tag-server
           await api.post(`/texts/${response.data.id}/upload-file`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
@@ -205,8 +184,6 @@ export default function MyRooms() {
       } else {
         alert(`Oda başarıyla oluşturuldu! Davet Kodunuz: ${response.data.inviteToken}`);
       }
-      
-      // Reset form and close modal
       setNewRoomName('');
       setNewRoomCapacity('');
       setNewRoomLabels('');
@@ -215,7 +192,6 @@ export default function MyRooms() {
       
     } catch (err) {
       console.error('Failed to create room:', err);
-      // Backend'den dönebilecek farklı hata objesi yapılarına karşı fallback mekanizması
       const errMsg = typeof err.response?.data === 'string' 
         ? err.response.data 
         : (err.response?.data?.message || err.response?.data?.error || err.message || 'Oda oluşturulamadı.');
@@ -228,12 +204,8 @@ export default function MyRooms() {
   if (loading) {
     return <div className="auth-layout"><p>Odalar yükleniyor...</p></div>;
   }
-
-  // Filter rooms
   const activeRooms = rooms.filter(r => r.status === 'ACTIVE');
   const closedRooms = rooms.filter(r => r.status === 'CLOSED');
-
-  // Helper to render a room card
   const renderRoomCard = (room, isActive) => {
     const isAdmin = room.owner_id === currentUserId;
     const roleText = isAdmin ? 'ADMIN' : 'USER';
@@ -251,7 +223,7 @@ export default function MyRooms() {
         transition: 'all 0.3s ease'
       }}>
         
-        {/* Top row: Name & Badge */}
+        
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <h3 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text-primary)' }}>{room.name}</h3>
@@ -276,7 +248,7 @@ export default function MyRooms() {
           </div>
         </div>
 
-        {/* Stats Row */}
+        
         <div style={{ display: 'flex', gap: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
             <Users size={16} /> Capacity: <strong style={{ color: 'var(--text-primary)' }}>{room.capacity}</strong>
@@ -286,7 +258,7 @@ export default function MyRooms() {
           </div>
         </div>
 
-        {/* Labels Row */}
+        
         {room.labels && room.labels.length > 0 && (
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {room.labels.map((lbl, idx) => (
@@ -297,7 +269,7 @@ export default function MyRooms() {
           </div>
         )}
 
-        {/* Actions Row */}
+        
         <div style={{ display: 'flex', gap: '12px', marginTop: '4px', flexWrap: 'wrap' }}>
           {isActive && (
             <button onClick={() => handleEnterRoom(room.id)} className="btn-primary" style={{ padding: '8px 16px', flex: 1, minWidth: '120px' }}>
@@ -327,7 +299,7 @@ export default function MyRooms() {
   return (
     <div style={{ minHeight: '100vh', padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
       
-      {/* Header Area */}
+      
       <div style={{ width: '100%', maxWidth: '900px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <LayoutDashboard size={32} color="var(--primary-color)" />
@@ -352,10 +324,10 @@ export default function MyRooms() {
         </div>
       )}
 
-      {/* Lists Container */}
+      
       <div style={{ width: '100%', maxWidth: '900px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
         
-        {/* ACTIVE ROOMS */}
+        
         <div className="glass-container" style={{ padding: '24px', margin: 0, maxWidth: 'none', alignSelf: 'start' }}>
           <h3 style={{ marginBottom: '20px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#4ade80' }}></div>
@@ -369,7 +341,7 @@ export default function MyRooms() {
           )}
         </div>
 
-        {/* CLOSED ROOMS */}
+        
         <div className="glass-container" style={{ padding: '24px', margin: 0, maxWidth: 'none', alignSelf: 'start', opacity: 0.8 }}>
           <h3 style={{ marginBottom: '20px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#f87171' }}></div>
@@ -384,7 +356,7 @@ export default function MyRooms() {
         </div>
       </div>
 
-      {/* Participants Modal */}
+      
       {showParticipantsModal && (
         <div style={{
           position: 'fixed',
@@ -447,7 +419,7 @@ export default function MyRooms() {
         </div>
       )}
 
-      {/* Create Room Modal */}
+      
       {showModal && (
         <div style={{
           position: 'fixed',
@@ -536,3 +508,4 @@ export default function MyRooms() {
     </div>
   );
 }
+

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Hash, ArrowLeft } from 'lucide-react';
-
-// Yardımcı fonksiyon: JWT çözücü
 function parseJwt(token) {
   try {
     if (!token) return null;
@@ -57,7 +55,7 @@ export default function Profile() {
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {/* Info Card 1 */}
+          
           <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '50%' }}>
               <User size={24} color="var(--text-primary)" />
@@ -68,7 +66,7 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Info Card 2 */}
+          
           <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '50%' }}>
               <Mail size={24} color="var(--text-primary)" />
@@ -79,7 +77,7 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Info Card 3 */}
+          
           <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '50%' }}>
               <Hash size={24} color="var(--text-primary)" />
@@ -101,3 +99,4 @@ export default function Profile() {
     </div>
   );
 }
+

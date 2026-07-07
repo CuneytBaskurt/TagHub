@@ -58,7 +58,7 @@ public class TextDataService {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				line = line.trim();
-				if (line.isEmpty()) continue; // Boş satırları atla
+				if (line.isEmpty()) continue;
 
 				if (fileName != null && fileName.endsWith(".csv")) {
 					if (line.startsWith("\"") && line.endsWith("\"")) {

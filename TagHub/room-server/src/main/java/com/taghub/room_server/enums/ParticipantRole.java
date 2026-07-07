@@ -5,3 +5,4 @@ public enum ParticipantRole {
 	USER,
 	OWNER
 }
+

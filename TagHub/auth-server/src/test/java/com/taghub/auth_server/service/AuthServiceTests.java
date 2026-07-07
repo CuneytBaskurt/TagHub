@@ -57,7 +57,7 @@ public class AuthServiceTests {
 		Assertions.assertNotNull(savedUser);
 		Assertions.assertEquals("cuneyt@gmail.com", savedUser.getUsername());
 		Assertions.assertEquals("cuneyt@gmail.com", savedUser.getEmail());
-		Assertions.assertEquals("encoded_123456", savedUser.getPassword()); // Encode edilmiş mi diye bakıyoruz
+		Assertions.assertEquals("encoded_123456", savedUser.getPassword());
 	}
 
 	@Test

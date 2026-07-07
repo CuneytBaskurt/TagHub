@@ -29,20 +29,14 @@ public class AuthController {
 	public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
 		return ResponseEntity.ok(authService.login(request));
 	}
-
-	// 🎯 1. KISIM: ŞİFRE SIFIRLAMA KODU İSTEME KAPISI
 	@PostMapping("/reset-password-request")
 	public ResponseEntity<String> requestResetPassword(@RequestBody ResetRequest request) {
-		// Kendi servis sınıfının adı neyse onunla çağır abi (örn: userService veya authService)
 		authService.resetPasswordRequest(request.email());
 
 		return ResponseEntity.ok("Şifre sıfırlama kodu başarıyla e-posta adresinize gönderildi, abi.");
 	}
-
-	// 🎯 2. KISIM: KODU DOĞRULAMA VE ŞİFREYİ DEĞİŞTİRME KAPISI
 	@PostMapping("/verify-reset-code")
 	public ResponseEntity<String> verifyAndChangePassword(@RequestBody PasswordVerifyRequest request) {
-		// Servis katmanındaki o ikinci doğrulama metodunu tetikliyoruz
 		authService.verifyAndChangePassword(request.email(), request.code(), request.newPassword());
 
 		return ResponseEntity.ok("Şifreniz başarıyla güncellendi! Yeni şifrenizle giriş yapabilirsiniz abi.");
@@ -53,4 +47,5 @@ public class AuthController {
 
 	public record PasswordVerifyRequest(String email, String code, String newPassword) {}
 }
+
 

@@ -101,8 +101,6 @@ public class RoomService {
 		}
 
 		UUID roomId = existRoom.getId();
-
-		// 🎯 Buradaki .name() kısmını da temizledik, Repository'ye Enum paslıyoruz!
 		long currentActiveUsers = roomParticipantRepository.countByRoomIdAndStatus(roomId, ParticipantStatus.ACTIVE);
 		if (currentActiveUsers >= existRoom.getCapacity()) {
 			throw new RuntimeException("Oda kapasitesi tamamen dolu, içeri giremezsiniz!");
@@ -133,7 +131,7 @@ public class RoomService {
 				.roomId(roomId)
 				.userId(userId)
 				.role(ParticipantRole.USER)
-				.status(ParticipantStatus.ACTIVE) // Zaten burası pürüzsüzdü
+				.status(ParticipantStatus.ACTIVE)
 				.build();
 
 		roomParticipantRepository.save(roomParticipant);
@@ -196,8 +194,6 @@ public class RoomService {
 		if (requester.getStatus() != ParticipantStatus.ACTIVE) {
 			throw new RuntimeException("Bu odada aktif değilsiniz, katılımcıları göremezsiniz!");
 		}
-
-		// 🎯 .name() kısmını sildik, doğrudan ENUM nesnesini gönderiyoruz!
 		return roomParticipantRepository.findAllByRoomIdAndStatus(roomId, ParticipantStatus.ACTIVE);
 	}
 
@@ -235,3 +231,4 @@ public class RoomService {
 
 
 }
+

@@ -26,8 +26,6 @@ public class TextDataController {
 			@RequestParam("file") MultipartFile file
 	) {
 		UUID adminId = UUID.fromString(adminIdString);
-
-		// Servis metodunu çağırıyoruz
 		textDataService.uploadTextsFromFile(roomId, adminId, file);
 
 		return ResponseEntity.ok("Dosya başarıyla işlendi ve içerisindeki metinler sisteme kaydedildi.");

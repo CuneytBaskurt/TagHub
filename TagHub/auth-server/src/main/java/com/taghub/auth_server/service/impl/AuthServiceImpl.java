@@ -66,42 +66,30 @@ public class AuthServiceImpl implements AuthService{
 	}
 
 	public void resetPasswordRequest(String email) {
-		// 1. Kullanıcı kontrolü
 		User user = userRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı!"));
-
-		// 2. 6 Haneli Rastgele OTP Kod Üretimi (100000 - 999999 arası)
 		String resetCode = String.valueOf((int) (Math.random() * 900000) + 100000);
-
-		// 3. Kodun geçerlilik süresini ayarla (Şu andan itibaren 5 dakika)
 		user.setResetCode(resetCode);
 		user.setResetCodeExpiresAt(LocalDateTime.now().plusMinutes(5));
 		userRepository.save(user);
-
-		// 4. MailServer yardımıyla asenkron veya direkt maili fırlat
 		mailServer.sendPasswordResetMail(email, resetCode);
 	}
 
 	public void verifyAndChangePassword(String email, String code, String newPassword) {
 		User user = userRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı!"));
-
-		// Kod eşleşiyor mu?
 		if (user.getResetCode() == null || !user.getResetCode().equals(code)) {
 			throw new RuntimeException("Geçersiz şifre sıfırlama kodu!");
 		}
-
-		// Kodun süresi dolmuş mu?
 		if (user.getResetCodeExpiresAt().isBefore(LocalDateTime.now())) {
 			throw new RuntimeException("Kodun süresi dolmuş! Lütfen yeniden kod talep edin.");
 		}
-
-		// Her şey okeyse yeni şifreyi BCrypt ile bileyip kaydet ve kodları temizle
 		user.setPassword(passwordEncoder.encode(newPassword));
-		user.setResetCode(null); // Tekrar kullanılmasın diye sıfırla
+		user.setResetCode(null);
 		user.setResetCodeExpiresAt(null);
 		userRepository.save(user);
 	}
 
 
 }
+

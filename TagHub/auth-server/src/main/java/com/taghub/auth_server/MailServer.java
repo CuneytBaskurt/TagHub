@@ -13,7 +13,7 @@ public class MailServer {
 
 	public void sendPasswordResetMail(String toEmail, String resetCode) {
 		SimpleMailMessage message = new SimpleMailMessage();
-		message.setFrom("cuneytbaskurt123@gmail.com"); // properties'deki mail ile aynı olmalı
+		message.setFrom("cuneytbaskurt123@gmail.com");
 		message.setTo(toEmail);
 		message.setSubject("TagHub - Şifre Sıfırlama Kodu 🔑");
 		message.setText("Merhaba,\n\n" +

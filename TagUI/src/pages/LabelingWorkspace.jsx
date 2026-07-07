@@ -21,11 +21,8 @@ export default function LabelingWorkspace() {
     const initWorkspace = async () => {
       try {
         setLoading(true);
-        // 1. Odanın detaylarını al (Etiketleri öğrenmek için)
         const roomRes = await api.get(`/room/${roomId}`);
         setRoom(roomRes.data);
-
-        // 2. İlk batch'i çek
         await fetchNextBatch();
       } catch (err) {
         console.error('Workspace init error', err);
@@ -35,7 +32,6 @@ export default function LabelingWorkspace() {
     };
 
     initWorkspace();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId]);
 
   const fetchNextBatch = async () => {
@@ -68,13 +64,10 @@ export default function LabelingWorkspace() {
       });
       
       setSessionCount(prev => prev + 1);
-      
-      // Sonraki cümleye geç
       if (currentIndex + 1 < batch.length) {
         setCurrentIndex(prev => prev + 1);
         setSubmitting(false);
       } else {
-        // Mevcut batch bitti, yenisini çek
         setLoading(true);
         await fetchNextBatch();
         setSubmitting(false);
@@ -129,7 +122,7 @@ export default function LabelingWorkspace() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
       
-      {/* Header */}
+      
       <div style={{ width: '100%', maxWidth: '800px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <Link to="/my-rooms" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>
           <ArrowLeft size={20} /> Odalara Dön
@@ -140,7 +133,7 @@ export default function LabelingWorkspace() {
         </div>
       </div>
 
-      {/* Progress Bar (Session based) */}
+      
       <div style={{ width: '100%', maxWidth: '800px', marginBottom: '40px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -159,7 +152,6 @@ export default function LabelingWorkspace() {
           <div style={{ 
             position: 'absolute',
             left: 0, top: 0, bottom: 0,
-            // Visual fake progress that pulses or just stays full to indicate continuous activity
             width: '100%', 
             backgroundColor: 'var(--primary-color)',
             transformOrigin: 'left',
@@ -168,14 +160,14 @@ export default function LabelingWorkspace() {
         </div>
       </div>
 
-      {/* Labeling Workspace */}
+      
       <div className="glass-container animate-fade-in" style={{ width: '100%', maxWidth: '800px', padding: '40px', margin: 0 }}>
         <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '16px', display: 'flex', justifyContent: 'space-between' }}>
           <span>Veri ID: {currentText?.id.substring(0,8)}...</span>
           <span>Paket: {currentIndex + 1} / {batch.length}</span>
         </div>
         
-        {/* The Text to Label */}
+        
         <div style={{ 
           fontSize: '1.25rem', 
           lineHeight: '1.6', 
@@ -200,7 +192,7 @@ export default function LabelingWorkspace() {
           )}
         </div>
 
-        {/* Labels / Buttons */}
+        
         <div>
           <h4 style={{ textAlign: 'center', marginBottom: '20px', color: 'var(--text-secondary)', fontWeight: '500' }}>Bu metin için uygun etiketi seçin:</h4>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
@@ -251,3 +243,4 @@ export default function LabelingWorkspace() {
     </div>
   );
 }
+

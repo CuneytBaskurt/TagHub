@@ -6,3 +6,4 @@ public enum ParticipantStatus {
 	LEFT,
 	ROOM_DELETED
 }
+

@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID; // UUID importunu unutma!
+import java.util.UUID;
 
 @Entity
 @Table(name = "room_participants")

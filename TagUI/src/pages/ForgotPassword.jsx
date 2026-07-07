@@ -15,7 +15,6 @@ export default function ForgotPassword() {
     setError(null);
     
     try {
-      // DTO in AuthController is ResetRequest(String email)
       await api.post('/auth/reset-password-request', { email });
       alert('Reset code has been sent to your email.');
       navigate('/reset-password', { state: { email } });
@@ -78,3 +77,4 @@ export default function ForgotPassword() {
     </div>
   );
 }
+

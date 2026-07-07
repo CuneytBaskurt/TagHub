@@ -21,7 +21,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/my-rooms" element={<MyRooms />} />
         <Route path="/room/:roomId" element={<LabelingWorkspace />} />
-        {/* Default route redirects to login */}
+        
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
@@ -29,3 +29,4 @@ function App() {
 }
 
 export default App;
+

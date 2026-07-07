@@ -5,8 +5,6 @@ import api from '../services/api';
 export default function Dashboard() {
   const [roomToken, setRoomToken] = useState('');
   const navigate = useNavigate();
-
-  // Şimdilik token'dan veya localStorage'dan email'i alıp username gibi gösteriyoruz
   const email = localStorage.getItem('userEmail') || 'User';
   const username = email !== 'User' ? email.split('@')[0] : 'User';
 
@@ -35,7 +33,7 @@ export default function Dashboard() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Navbar */}
+      
       <nav style={{ 
         padding: '20px 40px', 
         display: 'flex', 
@@ -64,7 +62,7 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      {/* Main Content */}
+      
       <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
         <div className="glass-container animate-fade-in" style={{ textAlign: 'center', maxWidth: '500px' }}>
           <h2 style={{ marginBottom: '8px' }}>Join a Labeling Room</h2>
@@ -95,3 +93,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

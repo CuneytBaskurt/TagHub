@@ -17,11 +17,8 @@ export default function Login() {
     
     try {
       const response = await api.post('/auth/login', { email, password });
-      // Assuming response.data contains { token: '...' } 
-      // If it's returning the whole user object or AuthResponse, we save the token
       if (response.data && response.data.token) {
         localStorage.setItem('token', response.data.token);
-        // Also save email for the Dashboard
         localStorage.setItem('userEmail', response.data.email || email);
       }
       navigate('/dashboard');
@@ -98,3 +95,4 @@ export default function Login() {
     </div>
   );
 }
+

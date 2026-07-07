@@ -15,3 +15,4 @@ public interface AnnotationRepository extends JpaRepository<Annotation, UUID> {
 
 	List<Annotation> findAllByRoomId(UUID roomId);
 }
+

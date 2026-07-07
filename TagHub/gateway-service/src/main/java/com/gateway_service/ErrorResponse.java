@@ -5,3 +5,4 @@ public record ErrorResponse(
 		String message,
 		long timestamp
 ) {}
+

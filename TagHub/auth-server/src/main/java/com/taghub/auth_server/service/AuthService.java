@@ -23,3 +23,4 @@ public interface AuthService {
 	void resetPasswordRequest(String email);
 	void verifyAndChangePassword(String email, String code, String newPassword);
 }
+

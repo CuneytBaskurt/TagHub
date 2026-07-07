@@ -12,7 +12,6 @@ export default function ResetPassword() {
   
   const location = useLocation();
   const navigate = useNavigate();
-  // We passed email via state from ForgotPassword page
   const email = location.state?.email || '';
 
   const handleSubmit = async (e) => {
@@ -26,7 +25,6 @@ export default function ResetPassword() {
     setError(null);
     
     try {
-      // DTO in AuthController is PasswordVerifyRequest(String email, String code, String newPassword)
       await api.post('/auth/verify-reset-code', { email, code, newPassword });
       setSuccess(true);
     } catch (err) {
@@ -123,3 +121,4 @@ export default function ResetPassword() {
     </div>
   );
 }
+
