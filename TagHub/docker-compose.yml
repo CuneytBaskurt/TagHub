@@ -1,0 +1,124 @@
+version: '3.8'
+
+services:
+  taghub-db:
+    image: postgres:15
+    container_name: taghub-db
+    environment:
+      POSTGRES_PASSWORD: mellon
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./init-dbs.sql:/docker-entrypoint-initdb.d/init-dbs.sql
+    networks:
+      - taghub-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  discovery-server:
+    build: ./discovery-server
+    container_name: taghub-discovery
+    ports:
+      - "8761:8761"
+    networks:
+      - taghub-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gateway-service:
+    build: ./gateway-service
+    container_name: gateway-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    networks:
+      - taghub-network
+
+  auth-service:
+    build: ./auth-server
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      taghub-db:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://taghub-db:5432/taghub_auth
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=mellon
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING=true
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+    networks:
+      - taghub-network
+
+  room-service:
+    build: ./room-server
+    container_name: room-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      taghub-db:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://taghub-db:5432/taghub_room
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=mellon
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING=true
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      - taghub-network
+
+  tag-service:
+    build: ./tag-server
+    container_name: tag-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      taghub-db:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://taghub-db:5432/taghub_labeling
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=mellon
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING=true
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      - taghub-network
+
+  taghub-ui:
+    build: ../TagUI
+    container_name: taghub-ui
+    ports:
+      - "5173:80"
+    depends_on:
+      gateway-service:
+        condition: service_started
+    networks:
+      - taghub-network
+
+networks:
+  taghub-network:
+    driver: bridge

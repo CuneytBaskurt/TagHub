@@ -1,0 +1,19 @@
+# Node & Frontend
+node_modules/
+dist/
+
+# Java & Spring Boot
+target/
+*.jar
+.mvn/
+
+# Veritabanı (Çok Önemli!)
+postgres_data/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Gizli Dosyalar (Secrets)
+.env
