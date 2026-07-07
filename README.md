@@ -2,27 +2,6 @@
 
 TagHub is a robust, microservices-based web application designed for collaborative text annotation and labeling. Built with **Spring Boot** on the backend and **React (Vite)** on the frontend, the entire platform is orchestrated using **Docker** and **Docker Compose**, making it highly scalable, resilient, and easy to deploy.
 
-## 🏗 Architecture Overview
-
-The system is built using a modern microservices architecture, heavily utilizing **Spring Cloud** for service discovery and API routing. 
-
-```mermaid
-graph TD
-    UI[React Frontend (TagUI) :5173] --> Gateway[API Gateway :8080]
-    Gateway -->|Routes| Auth[Auth Service :8081]
-    Gateway -->|Routes| Room[Room Service :8082]
-    Gateway -->|Routes| Tag[Tag Service :8083]
-    
-    Auth -.->|Registers| Discovery[Eureka Discovery Server :8761]
-    Room -.->|Registers| Discovery
-    Tag -.->|Registers| Discovery
-    Gateway -.->|Discovers| Discovery
-    
-    Auth --> DB[(PostgreSQL :5433)]
-    Room --> DB
-    Tag --> DB
-```
-
 ### 1. Eureka Discovery Server (`discovery-server`)
 Acts as the registry for all backend microservices. Every service (Auth, Room, Tag, Gateway) registers itself here upon startup. This eliminates the need for hardcoded IP addresses and ports, allowing services to find and communicate with each other dynamically.
 
